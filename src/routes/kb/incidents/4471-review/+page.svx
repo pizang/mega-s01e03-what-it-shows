@@ -1,0 +1,122 @@
+---
+layout: runbook
+title: '#4471 review · separate causes, not matching subjects'
+owner: Mirosław Iwanowski with omp
+status: reviewed
+reviewed: '2026-10-29'
+signature: 'OpenAI GPT-6.1-sol via omp · Mirosław Iwanowski · S01E03 · 2026-10-29'
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
+  import DedupeExplorer from '#lib/kb/DedupeExplorer.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+## Finding: one merged ticket is not one problem
+
+The [original incident page](/kb/incidents/4471) calls this one known parser issue with one
+fix queued. Its own computed view separates a shared-parser problem from a booking-form
+hint problem. Those need separate engineering tickets and separate fixes. This review
+records evidence from the export dated 4 October 2026; it does not claim that either fix
+has shipped or that the export is the current queue.
+
+The follow-up engineering tickets are [the shared parser](https://github.com/pizang/mega-s01e03-what-it-shows/issues/2)
+and [the booking-v3 hint](https://github.com/pizang/mega-s01e03-what-it-shows/issues/1).
+The table below describes filing in the exported desk snapshot, before these GitHub
+tickets were created.
+
+## Counts and classification
+
+<CauseTable ticket={4471} />
+
+The table counts each report ID once, using `uniqueById` from `causes.ts`, because export
+pages overlap. It filters to reports merged into #4471 and groups with `causeOf`, resolving
+the tenant through `locales.ts`. Tenant locale and booking-form version determine the
+cause; neither the reporter's browser locale nor `meta.intakeTag` is authoritative.
+The tag breakdown above exposes disagreements with intake instead of silently trusting it.
+
+### Parser: the shared parser assumes month first
+
+For day-first tenants, the shared parser interprets an intended day/month date as
+month/day. App and email reports remain in this group even when a tenant runs booking-v3;
+its form hint is not involved in those channels. Booking-v2 form reports also fall here.
+
+Evidence: R-41200 describes 7 April becoming 4 July for `harbour.dental` (en-GB,
+booking-v2, app). R-41203 describes 2 December becoming 12 February for `lantern.row`
+(cs-CZ, booking-v2, app). R-41205 belongs here despite its intake `hint` tag and en-US
+browser locale: `morrow.tax` is a fr-FR tenant and this is an app report.
+
+Engineering should make date parsing respect the tenant's date order, then check both
+ambiguous day/month inputs and unambiguous dates in affected channels. This is an
+inference from the kb's classifier and reports, not a reproduction against product code:
+the product implementation is not included in this export.
+
+### Hint: booking-v3 tells day-first users to type month first
+
+Booking-v3 displays `MM/DD/YYYY`, but the form interprets the entry in the tenant's
+day-first order. This distinct path affects form reports from `alder.physio` (de-DE),
+`copper.studio` (es-ES), and `pale.harbour` (pt-PT). A shared-parser fix alone does not
+correct that instruction.
+
+Evidence: R-41230 is a form report from `copper.studio` describing 6 January becoming
+1 June, although intake tagged it `parser`. R-41241 is a form report from `alder.physio`
+with an en-US browser locale; the tenant remains de-DE. R-41251 is a `pale.harbour` form
+report describing 7 January becoming 1 July and occurs twice in the overlapping export.
+
+Engineering should align the displayed hint with the tenant-specific interpretation and
+check the displayed instruction and resulting date together for all affected tenants.
+This mechanism comes from `DATE_HINT` and `causeOf`; the export does not include a live
+booking form to exercise.
+
+## Reports that the classification does not explain fully
+
+`desk-notes.json` flags R-41202, R-41209, R-41236, R-41344, and R-41620 as read as a
+one-day move. Their descriptions include adjacent-day dates, a June-only offset, an invite
+arriving before booking, and different days in Lisbon and Toronto. The classifier places
+all of them under `parser` by tenant and channel; the computed footnote above keeps them
+in that count. This does not establish that a month/day parser explains those symptoms.
+
+Keep those IDs visible on the parser ticket and ask for original timestamps, time zones,
+and reproduction details before deciding whether they warrant another ticket. Do not
+silently drop them, double-count them, or assert a time-zone root cause from these words
+alone.
+
+## The queue kept receiving reports
+
+<QueueTimeline ticket={4471} />
+
+The chart uses received and merged timestamps separately. The merge spike records desk
+activity, not the start of the bug. Reports arrived before the mass merge and continued
+through the end of the export. A known status, a queued fix, and a large merged ticket
+are not evidence that the incoming problem stopped.
+
+## Triage by cause, not by subject
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) and the
+[triage page](/kb/triage/dedupe) prescribe subject-only merging. Both were last reviewed
+in June 2024; the shared layout marks them stale. An accepted historical decision is not
+proof that it still matches the executable behavior. Leave that accepted record intact;
+a new decision should replace it rather than rewriting its history.
+
+<DedupeExplorer />
+
+The explorer runs the exported rules. Different subjects can describe the same cause.
+Matching subjects can hide different causes, including within one tenant across channels,
+or between tenants on the same channel. Unknown tenants do not establish a shared cause.
+
+<Callout>
+Proposed replacement rule: identify the tenant, its locale, the form version, and the
+report's channel; inspect the body and compare causes. Merge only when the cause is
+established to be the same. If the tenant or cause is unknown, keep the reports separate
+until investigated. A subject match is a search aid, not a merge decision.
+</Callout>
+
+Split the hint reports out of #4471, retain the parser reports with their anomaly notes,
+and link the two engineering issues. Recheck the live queue before applying these snapshot
+counts. The original accepted decision and triage page still need an explicit replacement
+by the desk; this review does not pretend that publishing a page changes its automation.
+
+<RenderStamp {signature} />

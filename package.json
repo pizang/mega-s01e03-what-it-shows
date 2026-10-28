@@ -1,0 +1,15 @@
+{
+  "name": "mega-s01e03-what-it-shows",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit": "bun scripts/audit.ts",
+    "render": "bun scripts/render.mjs",
+    "preview": "bun scripts/preview.mjs"
+  },
+  "dependencies": {
+    "acorn": "8.19.0",
+    "mdsvex": "0.12.8",
+    "svelte": "5.57.3"
+  }
+}
