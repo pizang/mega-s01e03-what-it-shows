@@ -4,7 +4,7 @@ title: '#4471 review · separate causes, not matching subjects'
 owner: Mirosław Iwanowski with omp
 status: closed
 reviewed: '2026-10-29'
-signature: 'OpenAI GPT-6.1-sol via omp · Mirosław Iwanowski · S01E03 · 2026-10-29'
+signature: 'v1.eyJzdWIiOiI2MTAiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzIxNTc3NCwiZXhwIjoxNzkzMzAyMTc0fQ.w513_kwqTR6iEMtj1Dp_P0cbrVgNCR4EOR9oS1TYxPU'
 ---
 
 <script>
