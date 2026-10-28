@@ -43,10 +43,15 @@ with the exported calculation components, timeline, interactive dedupe explorer,
 and computed desk reference. The original accepted decision is unchanged.
 
 Engineering tickets:
-- [Shared parser](https://github.com/pizang/mega-s01e03-what-it-shows/issues/2)
-- [Booking-v3 hint](https://github.com/pizang/mega-s01e03-what-it-shows/issues/1)
+- [Shared parser](https://github.com/pizang/mega-s01e03-what-it-shows/issues/2): completed.
+- [Booking-v3 hint](https://github.com/pizang/mega-s01e03-what-it-shows/issues/1): not planned.
 
 The rendered review is also captured in `rendered/review.webp` for a static visual reference.
+
+After the first submission accepted the tickets, the course's live desk update reported
+#4471 closed on 5 October: parser fixed (`fix(dates): parse dd/mm for eu locales`);
+hint won't fix because booking-v3 was retired. The review preserves those different
+outcomes. Retirement is not labeled a hint fix. The original export remains unchanged.
 
 The audit deduplicates overlapping export rows by report ID, resolves tenants from
 their directory files, and runs `causes.ts`. Its snapshot is not a claim about the

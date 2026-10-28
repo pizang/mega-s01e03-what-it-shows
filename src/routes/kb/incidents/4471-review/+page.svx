@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 review · separate causes, not matching subjects'
 owner: Mirosław Iwanowski with omp
-status: reviewed
+status: closed
 reviewed: '2026-10-29'
 signature: 'OpenAI GPT-6.1-sol via omp · Mirosław Iwanowski · S01E03 · 2026-10-29'
 ---
@@ -19,14 +19,27 @@ signature: 'OpenAI GPT-6.1-sol via omp · Mirosław Iwanowski · S01E03 · 2026-
 
 The [original incident page](/kb/incidents/4471) calls this one known parser issue with one
 fix queued. Its own computed view separates a shared-parser problem from a booking-form
-hint problem. Those need separate engineering tickets and separate fixes. This review
-records evidence from the export dated 4 October 2026; it does not claim that either fix
-has shipped or that the export is the current queue.
+hint problem. Those need separate diagnoses and dispositions, not one shared fix.
+The counts below come from the export dated 4 October 2026. They are not a live queue.
 
 The follow-up engineering tickets are [the shared parser](https://github.com/pizang/mega-s01e03-what-it-shows/issues/2)
 and [the booking-v3 hint](https://github.com/pizang/mega-s01e03-what-it-shows/issues/1).
 The table below describes filing in the exported desk snapshot, before these GitHub
 tickets were created.
+
+## Engineering update and closure
+
+The [course's live desk update](https://hq.mega.dev/challenges/what-it-shows) reports
+**#4471 closed 05 Oct**. It gives different outcomes for the two causes:
+
+- **Parser — fixed:** `fix(dates): parse dd/mm for eu locales`. Close its engineering
+  ticket as **completed**.
+- **Hint — won't fix:** **booking-v3 form retired**. Close its engineering ticket as
+  **not planned**, not completed: retirement removed the form, but did not fix its hint.
+
+Closing both as fixed would erase that distinction. These are engineering's reported
+outcomes, not an independent runtime verification of the product. The mechanism and
+acceptance-check descriptions below explain the snapshot, not work still open.
 
 ## Counts and classification
 
@@ -114,9 +127,9 @@ established to be the same. If the tenant or cause is unknown, keep the reports 
 until investigated. A subject match is a search aid, not a merge decision.
 </Callout>
 
-Split the hint reports out of #4471, retain the parser reports with their anomaly notes,
-and link the two engineering issues. Recheck the live queue before applying these snapshot
-counts. The original accepted decision and triage page still need an explicit replacement
+The separate engineering tickets preserve each cause, count, anomaly note, and closure
+reason. Recheck the live queue before applying these snapshot counts to new reports.
+The original accepted decision and triage page still need an explicit replacement
 by the desk; this review does not pretend that publishing a page changes its automation.
 
 <RenderStamp {signature} />
